@@ -19,10 +19,6 @@ var (
 	stop             = make(chan string)
 )
 
-func closeServer(w http.ResponseWriter, r *http.Request) {
-	stop <- "api"
-}
-
 func signalListener(stop chan string) {
 	c := make(chan os.Signal)
 	signal.Notify(c, syscall.SIGHUP, syscall.SIGQUIT, syscall.SIGTERM, syscall.SIGKILL, syscall.SIGINT)
@@ -55,8 +51,10 @@ func ttlListener(stop chan string) {
 
 func main() {
 	flag.Parse()
-	http.Handle("/", http.FileServer(http.Dir(*fileRoot)))
+	http.Handle("/download/", http.StripPrefix("/download", http.FileServer(http.Dir(*fileRoot))))
 	http.HandleFunc("/close", closeServer)
+	http.HandleFunc("/upload", upload)
+	http.HandleFunc("/", index)
 
 	addr := fmt.Sprintf("%s:%d", *ip, *port)
 	log.Printf("http server start: %s", addr)
