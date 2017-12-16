@@ -10,7 +10,7 @@ import (
 )
 
 var (
-	Title = "<h1>webserv @aoaolion</h1><p><h3>https://github.com/aoaolion/webserv</h3></p>"
+	Title = "<h1><a href='/'>webserv @aoaolion</a></h1><p><h3>https://github.com/aoaolion/webserv</h3></p>"
 )
 
 func FileExist(filename string) bool {
@@ -19,13 +19,16 @@ func FileExist(filename string) bool {
 }
 
 func closeServer(w http.ResponseWriter, r *http.Request) {
+	w.Write([]byte(Title))
+	w.Write([]byte("webserv close"))
 	stop <- "api"
 }
 
 func index(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte(Title))
 	w.Write([]byte("<a href='upload'>>> upload</a><br>"))
-	w.Write([]byte("<a href='download'><< download</a><br>"))
+	w.Write([]byte("<a href='download'><< download</a><br><br><br>"))
+	w.Write([]byte("<a href='close'>close</a><br>"))
 }
 
 func upload(w http.ResponseWriter, r *http.Request) {
