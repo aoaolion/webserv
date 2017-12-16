@@ -4,9 +4,7 @@ The Webserv Project
 WebServ is an simple http file server. It support both upload & download operation.
 
 ## Usage
-![idx shot](doc/shot_idx.png "The Webserv Project")
-![upload shot](doc/shot_upload.png "The Webserv Project")
-![download shot](doc/shot_download.png "The Webserv Project")
+![idx shot](doc/shot.gif "The Webserv Project")
 
 ## Install
 ``` Shell
