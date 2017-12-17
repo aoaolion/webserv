@@ -21,10 +21,9 @@ var (
 	border-top-style: solid;
 	border-top-color: #cccccc;
 	}
-	table tbody tr:hover {
-		background: #dddddd
+	table thead {
+		background: #c0c0c0
 	}
-	table tbody tr:hover td{background:none;}
 	table {
 	border-bottom-width: 1px;
 	border-bottom-style: solid;
@@ -36,15 +35,21 @@ var (
 	padding: 5px 10px;
 	font-size: 12px;
 	font-family: Verdana;
-	color: #222f72;
+	color: #444444;
 	}
 	
 	/* Alternating background colors */
-	table tr:nth-child(even) {
+	table tbody tr:nth-child(even) {
 	background: #f0f0f0
 	}
-	table tr:nth-child(odd) {
+	table tbody tr:nth-child(odd) {
 	background: #FFF
+	}
+		table tbody tr:hover {
+		background: #dddddd
+	}
+	table tbody tr:hover td {
+	background:none;
 	}</style>`
 
 	Title = Css + `<h1><a href='/'>webserv @aoaolion</a></h1>
