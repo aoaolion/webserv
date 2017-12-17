@@ -37,7 +37,7 @@ func upload(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		w.Write([]byte(Title))
 		w.Write([]byte("<div>"))
-		w.Write([]byte("<form action='http://127.0.0.1:8080/upload' method='post' enctype='multipart/form-data'>"))
+		w.Write([]byte("<form action='/upload' method='post' enctype='multipart/form-data'>"))
 		w.Write([]byte("	<p><input type='file' name='upload_file'></p>"))
 		w.Write([]byte("	<input type='submit' value='upload' />"))
 		w.Write([]byte("</form>"))
