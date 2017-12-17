@@ -1,16 +1,26 @@
 The Webserv Project
 =======================
 
-WebServ is an simple http file server. It support both upload & download operation.
+WebServ is an simple http file server. It support both upload & download & manage operation.
+The Project has no third-party dependence. It would works on any platfrom if golang is support.
 
 ## Usage
 ![idx shot](doc/shot.gif "The Webserv Project")
 
 ## Install
+
+### Compile from code
 ``` Shell
 - go get github.com/aoaolion/webserv
 - go build
 ```
+### Download binary
+- Mac
+> NOT available
+- Linux
+> NOT available
+- Windows
+> NOT available
 
 ## Run
 
