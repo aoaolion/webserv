@@ -5,18 +5,8 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
-	"os"
 	"strings"
 )
-
-var (
-	Title = "<h1><a href='/'>webserv @aoaolion</a></h1><p><h3>https://github.com/aoaolion/webserv</h3></p>"
-)
-
-func FileExist(filename string) bool {
-	_, err := os.Stat(filename)
-	return err == nil || os.IsExist(err)
-}
 
 func closeServer(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte(Title))
@@ -29,6 +19,57 @@ func index(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("<a href='upload'>>> upload</a><br>"))
 	w.Write([]byte("<a href='download'><< download</a><br><br><br>"))
 	w.Write([]byte("<a href='close'>close</a><br>"))
+}
+
+func download(w http.ResponseWriter, r *http.Request) {
+	log.Println(r)
+	log.Println(r.URL)
+	if r.URL.String() == "/download/" || r.URL.String() == "/" {
+		files, err := ListDirAll(*fileRoot, "")
+		if err != nil {
+			w.Write([]byte("<head><meta http-equiv=refresh content='2;url=/'></head>"))
+			w.Write([]byte(Title))
+			w.Write([]byte("download error, auto redirect"))
+		}
+		w.Write([]byte(Title))
+		w.Write([]byte("<table width='100%'>"))
+		w.Write([]byte("<thead><th>file</th><th>size</th><th>modify time</th><th>manage</th></thead><tbody>"))
+		for _, file := range files {
+			w.Write([]byte("<tr>"))
+			line := fmt.Sprintf("<td><a href='/download/%s'>%s</a></td><td>%d</td><td>%s</td><td><a href=''>delete</a></td>",
+				file.Name(), file.Name(), file.Size(), file.ModTime())
+
+			w.Write([]byte(line))
+			w.Write([]byte("</tr>"))
+		}
+		w.Write([]byte("</tbody></table>"))
+		return
+	}
+
+	fileName := strings.TrimPrefix(r.URL.Path, "/download/")
+	filePath := fmt.Sprintf("%s/%s", *fileRoot, fileName)
+	log.Println(filePath)
+
+	if !FileExist(filePath) {
+		w.Write([]byte("<head><meta http-equiv=refresh content='2;url=/'></head>"))
+		w.Write([]byte(Title))
+		w.Write([]byte("download error, auto redirect"))
+		return
+	}
+	buf, err := ioutil.ReadFile(filePath)
+	if err != nil {
+		w.Write([]byte("<head><meta http-equiv=refresh content='2;url=/'></head>"))
+		w.Write([]byte(Title))
+		w.Write([]byte("download error, auto redirect"))
+		return
+	}
+	w.Write(buf)
+	w.Header().Add("content-disposition", "attachment; filename=\""+fileName+"\"")
+
+}
+
+func del(w http.ResponseWriter, r *http.Request) {
+	log.Println(r)
 }
 
 func upload(w http.ResponseWriter, r *http.Request) {
