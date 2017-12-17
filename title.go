@@ -52,7 +52,11 @@ var (
 	background:none;
 	}</style>`
 
-	Title = Css + `<h1><a href='/'>webserv @aoaolion</a></h1>
+	Meta = `<meta name="viewport" content="width=device-width, initial-scale=0.9, user-scalable=no, minimum-scale=0.9, maximum-scale=0.9" />  
+<meta name="apple-mobile-web-app-capable" content="yes" />  
+<meta name="format-detection" content="telephone=no" />`
+
+	Title = Css + Meta + `<h1><a href='/'>webserv @aoaolion</a></h1>
 		
 		<a href='/upload'>upload</a> &nbsp;&nbsp;
 		<a href='/download'>download</a> &nbsp;&nbsp;
