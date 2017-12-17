@@ -22,7 +22,7 @@ var (
 	border-top-color: #cccccc;
 	}
 	table thead {
-		background: #c0c0c0
+		background: #c4d6f9
 	}
 	table {
 	border-bottom-width: 1px;

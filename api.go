@@ -9,13 +9,19 @@ import (
 	"strings"
 )
 
+func reqlog(r *http.Request) {
+	log.Printf("msg=request||method=%s||url=%s||host=%s", r.Method, r.URL, r.Host)
+}
+
 func closeServer(w http.ResponseWriter, r *http.Request) {
+	reqlog(r)
 	w.Write([]byte(Title))
 	w.Write([]byte("webserv close"))
 	stop <- "api"
 }
 
 func download(w http.ResponseWriter, r *http.Request) {
+	reqlog(r)
 	if strings.Contains(r.URL.String(), "../") {
 		w.Write([]byte("<head><meta http-equiv=refresh content='1;url=/'></head>"))
 		w.Write([]byte(Title))
@@ -23,7 +29,7 @@ func download(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	log.Println(r.URL)
+	// url without filename, render file list
 	if r.URL.String() == "/download/" || r.URL.String() == "/" {
 		files, err := ListDirAll(*fileRoot, "")
 		if err != nil {
@@ -48,9 +54,9 @@ func download(w http.ResponseWriter, r *http.Request) {
 
 	fileName := strings.TrimPrefix(r.URL.Path, "/download/")
 	filePath := fmt.Sprintf("%s/%s", *fileRoot, fileName)
-	log.Println(filePath)
 
 	if !FileExist(filePath) {
+		w.WriteHeader(http.StatusNotFound)
 		w.Write([]byte("<head><meta http-equiv=refresh content='1;url=/'></head>"))
 		w.Write([]byte(Title))
 		w.Write([]byte("download error, auto redirect"))
@@ -69,6 +75,7 @@ func download(w http.ResponseWriter, r *http.Request) {
 }
 
 func del(w http.ResponseWriter, r *http.Request) {
+	reqlog(r)
 	fileName := strings.TrimPrefix(r.URL.Path, "/delete/")
 	if strings.Contains(fileName, "../") {
 		w.Write([]byte("<head><meta http-equiv=refresh content='1;url=/'></head>"))
@@ -78,7 +85,6 @@ func del(w http.ResponseWriter, r *http.Request) {
 	}
 
 	filePath := fmt.Sprintf("%s/%s", *fileRoot, fileName)
-	log.Println(filePath)
 
 	if !FileExist(filePath) {
 		w.Write([]byte("<head><meta http-equiv=refresh content='1;url=/'></head>"))
@@ -93,12 +99,12 @@ func del(w http.ResponseWriter, r *http.Request) {
 }
 
 func upload(w http.ResponseWriter, r *http.Request) {
+	reqlog(r)
 	file, header, err := r.FormFile("upload_file")
-
 	if err != nil {
 		w.Write([]byte(Title))
 		w.Write([]byte("<div>"))
-		w.Write([]byte("<form action='/upload' method='post' enctype='multipart/form-data'>"))
+		w.Write([]byte("<form action='/upload/' method='post' enctype='multipart/form-data'>"))
 		w.Write([]byte("	<p><input type='file' name='upload_file'></p>"))
 		w.Write([]byte("	<input type='submit' value='upload' />"))
 		w.Write([]byte("</form>"))
@@ -122,8 +128,6 @@ func upload(w http.ResponseWriter, r *http.Request) {
 	}
 
 	savePath := fmt.Sprintf("%s/%s", *fileRoot, header.Filename)
-	log.Printf("save file: %s", savePath)
-
 	if FileExist(savePath) {
 		w.Write([]byte(Title))
 		w.Write([]byte("<head><meta http-equiv=refresh content='1;url=/upload'></head>"))

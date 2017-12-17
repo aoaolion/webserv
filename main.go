@@ -51,21 +51,20 @@ func ttlListener(stop chan string) {
 
 func main() {
 	flag.Parse()
+	http.HandleFunc("/upload/", upload)
 	http.HandleFunc("/download/", download)
 	http.HandleFunc("/delete/", del)
-	http.HandleFunc("/close", closeServer)
-	http.HandleFunc("/upload", upload)
+	http.HandleFunc("/close/", closeServer)
 	http.HandleFunc("/", download)
 
 	addr := fmt.Sprintf("%s:%d", *ip, *port)
-	log.Printf("http server start: %s", addr)
-	log.Printf("root dir is: %s", *fileRoot)
+	log.Printf("msg=http server start||ip=%s||port=%d||file_root=%s", *ip, *port, *fileRoot)
 
 	go httpListener(addr, stop)
 	go signalListener(stop)
 	go ttlListener(stop)
 	select {
 	case msg := <-stop:
-		log.Printf("http server close: %s", msg)
+		log.Printf("msg=http server close||cause=%s", msg)
 	}
 }
