@@ -64,12 +64,12 @@ func download(w http.ResponseWriter, r *http.Request) {
 			if strings.HasSuffix(strings.ToLower(file.Name()), ".mov") ||
 				strings.HasSuffix(strings.ToLower(file.Name()), ".mp4") {
 				line = fmt.Sprintf(`<td><a href='/download/%s'>%s</a></td>
-				<td>%d</td> <td>%s</td> <td><a href='/play/%s'>play</a>&nbsp;<a href='/delete/%s'>delete</a></td>`,
-					file.Name(), file.Name(), file.Size(), file.ModTime(), file.Name())
+				<td>%s</td> <td>%s</td> <td><a href='/play/%s'>play</a>&nbsp;<a href='/delete/%s'>delete</a></td>`,
+					file.Name(), file.Name(), UnitSize(file.Size()), file.ModTime(), file.Name())
 			} else {
 				line = fmt.Sprintf(`<td><a href='/download/%s'>%s</a></td>
-				<td>%d</td> <td>%s</td> <td><a href='/delete/%s'>delete</a></td>`,
-					file.Name(), file.Name(), file.Size(), file.ModTime(), file.Name())
+				<td>%s</td> <td>%s</td> <td><a href='/delete/%s'>delete</a></td>`,
+					file.Name(), file.Name(), UnitSize(file.Size()), file.ModTime(), file.Name())
 			}
 			w.Write([]byte(line))
 			w.Write([]byte("</tr>"))
