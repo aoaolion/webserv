@@ -53,6 +53,7 @@ func main() {
 	flag.Parse()
 	http.HandleFunc("/upload/", upload)
 	http.HandleFunc("/download/", download)
+	http.HandleFunc("/play/", play)
 	http.HandleFunc("/delete/", del)
 	http.HandleFunc("/close/", closeServer)
 	http.HandleFunc("/", download)

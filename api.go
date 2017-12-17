@@ -20,6 +20,24 @@ func closeServer(w http.ResponseWriter, r *http.Request) {
 	stop <- "api"
 }
 
+func play(w http.ResponseWriter, r *http.Request) {
+	reqlog(r)
+	fileName := strings.TrimPrefix(r.URL.Path, "/play/")
+	filePath := fmt.Sprintf("%s/%s", *fileRoot, fileName)
+
+	if !FileExist(filePath) {
+		w.WriteHeader(http.StatusNotFound)
+		w.Write([]byte("<head><meta http-equiv=refresh content='1;url=/'></head>"))
+		w.Write([]byte(Title))
+		w.Write([]byte("play error, auto redirect"))
+		return
+	}
+
+	play := fmt.Sprintf("<body><video src='/download/%s' autoplay='autoplay' type='video/mp4' height='400px' width='100%%' controls='controls'></video></body>", fileName)
+	w.Write([]byte(Title))
+	w.Write([]byte(play))
+}
+
 func download(w http.ResponseWriter, r *http.Request) {
 	reqlog(r)
 	if strings.Contains(r.URL.String(), "../") {
@@ -42,9 +60,17 @@ func download(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("<thead><th>file</th><th>size</th><th>modify time</th><th>manage</th></thead><tbody>"))
 		for _, file := range files {
 			w.Write([]byte("<tr>"))
-			line := fmt.Sprintf("<td><a href='/download/%s'>%s</a></td><td>%d</td><td>%s</td><td><a href='/delete/%s'>delete</a></td>",
-				file.Name(), file.Name(), file.Size(), file.ModTime(), file.Name())
-
+			line := ""
+			if strings.HasSuffix(strings.ToLower(file.Name()), ".mov") ||
+				strings.HasSuffix(strings.ToLower(file.Name()), ".mp4") {
+				line = fmt.Sprintf(`<td><a href='/download/%s'>%s</a></td>
+				<td>%d</td> <td>%s</td> <td><a href='/play/%s'>play</a>&nbsp;<a href='/delete/%s'>delete</a></td>`,
+					file.Name(), file.Name(), file.Size(), file.ModTime(), file.Name())
+			} else {
+				line = fmt.Sprintf(`<td><a href='/download/%s'>%s</a></td>
+				<td>%d</td> <td>%s</td> <td><a href='/delete/%s'>delete</a></td>`,
+					file.Name(), file.Name(), file.Size(), file.ModTime(), file.Name())
+			}
 			w.Write([]byte(line))
 			w.Write([]byte("</tr>"))
 		}
