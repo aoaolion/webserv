@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"os"
 	"strings"
 )
 
@@ -22,12 +23,18 @@ func index(w http.ResponseWriter, r *http.Request) {
 }
 
 func download(w http.ResponseWriter, r *http.Request) {
-	log.Println(r)
+	if strings.Contains(r.URL.String(), "../") {
+		w.Write([]byte("<head><meta http-equiv=refresh content='1;url=/'></head>"))
+		w.Write([]byte(Title))
+		w.Write([]byte("download error, auto redirect"))
+		return
+	}
+
 	log.Println(r.URL)
 	if r.URL.String() == "/download/" || r.URL.String() == "/" {
 		files, err := ListDirAll(*fileRoot, "")
 		if err != nil {
-			w.Write([]byte("<head><meta http-equiv=refresh content='2;url=/'></head>"))
+			w.Write([]byte("<head><meta http-equiv=refresh content='1;url=/'></head>"))
 			w.Write([]byte(Title))
 			w.Write([]byte("download error, auto redirect"))
 		}
@@ -36,8 +43,8 @@ func download(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("<thead><th>file</th><th>size</th><th>modify time</th><th>manage</th></thead><tbody>"))
 		for _, file := range files {
 			w.Write([]byte("<tr>"))
-			line := fmt.Sprintf("<td><a href='/download/%s'>%s</a></td><td>%d</td><td>%s</td><td><a href=''>delete</a></td>",
-				file.Name(), file.Name(), file.Size(), file.ModTime())
+			line := fmt.Sprintf("<td><a href='/download/%s'>%s</a></td><td>%d</td><td>%s</td><td><a href='/delete/%s'>delete</a></td>",
+				file.Name(), file.Name(), file.Size(), file.ModTime(), file.Name())
 
 			w.Write([]byte(line))
 			w.Write([]byte("</tr>"))
@@ -51,14 +58,14 @@ func download(w http.ResponseWriter, r *http.Request) {
 	log.Println(filePath)
 
 	if !FileExist(filePath) {
-		w.Write([]byte("<head><meta http-equiv=refresh content='2;url=/'></head>"))
+		w.Write([]byte("<head><meta http-equiv=refresh content='1;url=/'></head>"))
 		w.Write([]byte(Title))
 		w.Write([]byte("download error, auto redirect"))
 		return
 	}
 	buf, err := ioutil.ReadFile(filePath)
 	if err != nil {
-		w.Write([]byte("<head><meta http-equiv=refresh content='2;url=/'></head>"))
+		w.Write([]byte("<head><meta http-equiv=refresh content='1;url=/'></head>"))
 		w.Write([]byte(Title))
 		w.Write([]byte("download error, auto redirect"))
 		return
@@ -69,7 +76,27 @@ func download(w http.ResponseWriter, r *http.Request) {
 }
 
 func del(w http.ResponseWriter, r *http.Request) {
-	log.Println(r)
+	fileName := strings.TrimPrefix(r.URL.Path, "/delete/")
+	if strings.Contains(fileName, "../") {
+		w.Write([]byte("<head><meta http-equiv=refresh content='1;url=/'></head>"))
+		w.Write([]byte(Title))
+		w.Write([]byte("del error, auto redirect"))
+		return
+	}
+
+	filePath := fmt.Sprintf("%s/%s", *fileRoot, fileName)
+	log.Println(filePath)
+
+	if !FileExist(filePath) {
+		w.Write([]byte("<head><meta http-equiv=refresh content='1;url=/'></head>"))
+		w.Write([]byte(Title))
+		w.Write([]byte("delete error, auto redirect"))
+		return
+	}
+	os.Remove(filePath)
+	w.Write([]byte(Title))
+	w.Write([]byte("<head><meta http-equiv=refresh content='1;url=/download'></head>"))
+	w.Write([]byte("delete success, auto redirect"))
 }
 
 func upload(w http.ResponseWriter, r *http.Request) {
@@ -88,14 +115,14 @@ func upload(w http.ResponseWriter, r *http.Request) {
 
 	buf, err := ioutil.ReadAll(file)
 	if err != nil {
-		w.Write([]byte("<head><meta http-equiv=refresh content='2;url=/upload'></head>"))
+		w.Write([]byte("<head><meta http-equiv=refresh content='1;url=/upload'></head>"))
 		w.Write([]byte(Title))
 		w.Write([]byte("upload error, auto redirect"))
 		return
 	}
 
 	if strings.Contains(header.Filename, "../") {
-		w.Write([]byte("<head><meta http-equiv=refresh content='2;url=/upload'></head>"))
+		w.Write([]byte("<head><meta http-equiv=refresh content='1;url=/upload'></head>"))
 		w.Write([]byte(Title))
 		w.Write([]byte("upload error, auto redirect"))
 		return
@@ -106,13 +133,13 @@ func upload(w http.ResponseWriter, r *http.Request) {
 
 	if FileExist(savePath) {
 		w.Write([]byte(Title))
-		w.Write([]byte("<head><meta http-equiv=refresh content='2;url=/upload'></head>"))
+		w.Write([]byte("<head><meta http-equiv=refresh content='1;url=/upload'></head>"))
 		w.Write([]byte("file has exist, auto redirect"))
 		return
 	}
 	ioutil.WriteFile(savePath, buf, 0666)
 	w.Write([]byte(Title))
-	w.Write([]byte("<head><meta http-equiv=refresh content='2;url=/download'></head>"))
+	w.Write([]byte("<head><meta http-equiv=refresh content='1;url=/download'></head>"))
 	w.Write([]byte("upload success, auto redirect"))
 	return
 }

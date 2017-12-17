@@ -51,9 +51,8 @@ func ttlListener(stop chan string) {
 
 func main() {
 	flag.Parse()
-	//http.Handle("/download/", http.StripPrefix("/download", http.FileServer(http.Dir(*fileRoot))))
 	http.HandleFunc("/download/", download)
-	http.HandleFunc("/del/", del)
+	http.HandleFunc("/delete/", del)
 	http.HandleFunc("/close", closeServer)
 	http.HandleFunc("/upload", upload)
 	http.HandleFunc("/", download)
