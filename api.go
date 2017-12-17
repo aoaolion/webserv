@@ -15,13 +15,6 @@ func closeServer(w http.ResponseWriter, r *http.Request) {
 	stop <- "api"
 }
 
-func index(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte(Title))
-	w.Write([]byte("<a href='upload'>>> upload</a><br>"))
-	w.Write([]byte("<a href='download'><< download</a><br><br><br>"))
-	w.Write([]byte("<a href='close'>close</a><br>"))
-}
-
 func download(w http.ResponseWriter, r *http.Request) {
 	if strings.Contains(r.URL.String(), "../") {
 		w.Write([]byte("<head><meta http-equiv=refresh content='1;url=/'></head>"))
