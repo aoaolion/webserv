@@ -65,11 +65,11 @@ func download(w http.ResponseWriter, r *http.Request) {
 				strings.HasSuffix(strings.ToLower(file.Name()), ".mp4") {
 				line = fmt.Sprintf(`<td><a href='/download/%s'>%s</a></td>
 				<td>%s</td> <td>%s</td> <td><a href='/play/%s'>play</a>&nbsp;<a href='/delete/%s'>delete</a></td>`,
-					file.Name(), file.Name(), UnitSize(file.Size()), file.ModTime(), file.Name())
+					file.Name(), file.Name(), UnitSize(file.Size()), file.ModTime().Format("2006-01-02 15:04:05"), file.Name())
 			} else {
 				line = fmt.Sprintf(`<td><a href='/download/%s'>%s</a></td>
 				<td>%s</td> <td>%s</td> <td><a href='/delete/%s'>delete</a></td>`,
-					file.Name(), file.Name(), UnitSize(file.Size()), file.ModTime(), file.Name())
+					file.Name(), file.Name(), UnitSize(file.Size()), file.ModTime().Format("2006-01-02 15:04:05"), file.Name())
 			}
 			w.Write([]byte(line))
 			w.Write([]byte("</tr>"))
