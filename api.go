@@ -83,12 +83,12 @@ func download(w http.ResponseWriter, r *http.Request) {
 			if strings.HasSuffix(strings.ToLower(file.Name()), ".mov") ||
 				strings.HasSuffix(strings.ToLower(file.Name()), ".mp4") {
 				line = fmt.Sprintf(`<td><a href='/download/%s'>%s</a></td>
-				<td>%s</td> <td>%s</td> <td style="text-align: center;"><a href='/play/%s' class='btn'>play</a>&nbsp;<a href='/delete/%s' class='btn'>delete</a></td>`,
-					file.Name(), file.Name(), UnitSize(file.Size()), file.ModTime().Format("2006-01-02 15:04:05"), file.Name(), file.Name())
+				<td>%s</td> <td>%s</td> <td style="text-align: center;"><div class='btn'><a href='/play/%s'>play</a></div>&nbsp;<div class='btn'><a href='/download/%s'>down</a></div>&nbsp;<div class='btn'><a href='/delete/%s'>del</a></div></td>`,
+					file.Name(), file.Name(), UnitSize(file.Size()), file.ModTime().Format("2006-01-02 15:04:05"), file.Name(), file.Name(), file.Name())
 			} else {
 				line = fmt.Sprintf(`<td><a href='/download/%s'>%s</a></td>
-				<td>%s</td> <td>%s</td> <td style="text-align: center;"><a href='/delete/%s' class='btn'>delete</a></td>`,
-					file.Name(), file.Name(), UnitSize(file.Size()), file.ModTime().Format("2006-01-02 15:04:05"), file.Name())
+				<td>%s</td> <td>%s</td> <td style="text-align: center;"><div class='btn'><a href='/download/%s'>down</a></div>&nbsp;<div class='btn'><a href='/delete/%s'>del</a></div></td>`,
+					file.Name(), file.Name(), UnitSize(file.Size()), file.ModTime().Format("2006-01-02 15:04:05"), file.Name(), file.Name())
 			}
 			w.Write([]byte(line))
 			w.Write([]byte("</tr>"))

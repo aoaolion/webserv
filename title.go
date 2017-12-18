@@ -81,6 +81,8 @@ var (
 		border: 1px solid #000;
 		padding: 2px 3px;
 		border-radius:5px;
+		width: 50px;
+		float: left;
 	}
 </style>`
 
