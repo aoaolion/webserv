@@ -12,11 +12,13 @@ import (
 )
 
 var (
-	fileRoot *string = flag.String("d", "file_root", "root of dir")
-	ip       *string = flag.String("h", "", "listen ip")
-	port     *int    = flag.Int("p", 8080, "listen port")
-	ttl      *int    = flag.Int("t", 600, "time to live in second")
-	stop             = make(chan string)
+	fileRoot  *string = flag.String("d", "file_root", "root of dir")
+	ip        *string = flag.String("h", "", "listen ip")
+	port      *int    = flag.Int("p", 8080, "listen port")
+	ttl       *int    = flag.Int("t", 600, "time to live in second")
+	gUsername *string = flag.String("u", "", "username")
+	gPassword *string = flag.String("P", "", "password")
+	stop              = make(chan string)
 )
 
 func signalListener(stop chan string) {
@@ -51,6 +53,7 @@ func ttlListener(stop chan string) {
 
 func main() {
 	flag.Parse()
+	http.HandleFunc("/logout/", Logout)
 	http.HandleFunc("/upload/", upload)
 	http.HandleFunc("/download/", download)
 	http.HandleFunc("/play/", play)
