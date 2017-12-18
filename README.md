@@ -1,10 +1,10 @@
 The Webserv Project
 =======================
 
-WebServ is an simple http file server. It support both upload & download & manage operation.
-The Project has no third-party dependence. It would works on any platfrom if golang is support.
-Support image and video transfer on iPhone, iPad, Android device.
-The server implement basic auth base on base64, which could fulfill most environment.
+WebServ is an simple http file server. Effectively file upload, download and management can be done.
+The project builds without any third-party dependence. It runs well across the platfrom only if golang supports.
+Easily transfer and share images and videos among pc, server, iPhone, iPad and Android devices.
+Considering safty, the server uses basic auth on base64, suitable for most conditions.
 
 ## Usage
 ![idx shot](doc/shot.gif "The Webserv Project")
@@ -30,14 +30,14 @@ The server implement basic auth base on base64, which could fulfill most environ
 ./weberv -d [file root] -h [listen ip] -p [listen port] -t [ttl] -u [username] -P [password]
 ```
 
-The service listen to 0.0.0.0:8080 as default. And the default dir is file_root.
-The default ttl is set 600, which means 10mins. If you do not want ttl, take to value to 0.
+The default listening address is 0.0.0.0:8080. And the default dir is file_root.
+The default ttl is set 600, which equals to 10mins. If you do not want ttl, set the value to 0.
 
 Notice: Basic auth works when uername is not empty!
 
 ## Close
 
-There are three ways to close this service.
-- access api, http://ip:port/close 
-- signals, such as kill, ctl+c
-- ttl way can close the service, only if ttl value is not 0
+There are three ways to shutdown this service.
+- Via api, http://ip:port/close 
+- Via OS signals, such as kill, ctl+c
+- Via ttl method, on condition that the ttl value is not 0
