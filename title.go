@@ -97,14 +97,14 @@ var (
 
 	Nav = `<header style="width: 100%; height: 42px; background: #3c3d45; position: relative;">
 		<div style="position: absolute;left:0;top:0;">
-			<p style='font-size: 30px;margin-top: 0px;margin-bottom: 0px; background-color:#5a91f8; color:white;padding: 0 10px;'>webserv</p>
+			<a style='font-size: 30px;margin-top: 0px;margin-bottom: 0px; background-color:#5a91f8; color:white;padding: 0 10px;' href="/">webserv</a>
 		</div>
 		<ul class="clearfix" style="width: 100%;margin-left: 140px">
 			<li><a href="/upload">Upload</a></li>
 			<li><a href="/download">Download</a></li>
 			<li><a href="/logout">Logout</a></li>
-			<li><a href="/close">Close</a></li>
 			<li><a href="https://github.com/aoaolion/webserv" target="_blank">About</a></li>
+			<li><a href="/shutdown">Shutdown</a></li>
 		</ul>
 	</header>`
 )

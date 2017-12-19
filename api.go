@@ -23,12 +23,12 @@ func reqlog(w http.ResponseWriter, r *http.Request) {
 	log.Printf("msg=request||method=%s||url=%s||host=%s", r.Method, r.URL, r.Host)
 }
 
-func closeServer(w http.ResponseWriter, r *http.Request) {
+func shutdown(w http.ResponseWriter, r *http.Request) {
 	reqlog(w, r)
 	if !Auth(w, r) {
 		return
 	}
-	Redirect(w, "Webserv close")
+	Redirect(w, "Webserv shutdown")
 	stop <- "api"
 }
 
@@ -171,12 +171,16 @@ func upload(w http.ResponseWriter, r *http.Request) {
 		Redirect(w, "Error, file has exist")
 		return
 	}
-	ioutil.WriteFile(savePath, buf, 0666)
+	err = ioutil.WriteFile(savePath, buf, 0666)
+	if err != nil {
+		Redirect(w, "Upload error")
+		return
+	}
 	Redirect(w, "Upload success")
 	return
 }
 
-func Logout(w http.ResponseWriter, req *http.Request) {
+func logout(w http.ResponseWriter, req *http.Request) {
 	if *gUsername == "" {
 		Redirect(w, "Not login yet")
 		return
@@ -188,18 +192,22 @@ func Logout(w http.ResponseWriter, req *http.Request) {
 }
 
 func Auth(w http.ResponseWriter, req *http.Request) bool {
+	// always return auth ok, when username is empty
 	if *gUsername == "" {
 		return true
 	}
 
 	auth := req.Header.Get("Authorization")
 	if auth == "" {
-		w.Header().Set("WWW-Authenticate", `Basic realm="Dotcoo User Login"`)
+		w.Header().Set("WWW-Authenticate", `Basic realm="Webserv User Login"`)
 		w.WriteHeader(http.StatusUnauthorized)
 		return false
 	}
+
 	auths := strings.SplitN(auth, " ", 2)
 	if len(auths) != 2 {
+		w.Header().Set("WWW-Authenticate", `Basic realm="Webserv User Login"`)
+		w.WriteHeader(http.StatusUnauthorized)
 		return false
 	}
 	authMethod := auths[0]
@@ -208,11 +216,10 @@ func Auth(w http.ResponseWriter, req *http.Request) bool {
 	case "Basic":
 		authstr, err := base64.StdEncoding.DecodeString(authB64)
 		if err != nil {
-			fmt.Println(err)
-			io.WriteString(w, "Unauthorized\n")
+			w.Header().Set("WWW-Authenticate", `Basic realm="Webserv User Login"`)
+			w.WriteHeader(http.StatusUnauthorized)
 			return false
 		}
-		fmt.Println(string(authstr))
 		userPwd := strings.SplitN(string(authstr), ":", 2)
 		if len(userPwd) != 2 {
 			return false

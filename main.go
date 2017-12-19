@@ -53,12 +53,16 @@ func ttlListener(stop chan string) {
 
 func main() {
 	flag.Parse()
-	http.HandleFunc("/logout/", Logout)
+	if !FileExist(*fileRoot) {
+		os.MkdirAll(*fileRoot, 0755)
+	}
+
 	http.HandleFunc("/upload/", upload)
 	http.HandleFunc("/download/", download)
 	http.HandleFunc("/play/", play)
 	http.HandleFunc("/delete/", del)
-	http.HandleFunc("/close/", closeServer)
+	http.HandleFunc("/shutdown/", shutdown)
+	http.HandleFunc("/logout/", logout)
 	http.HandleFunc("/", download)
 
 	addr := fmt.Sprintf("%s:%d", *ip, *port)
