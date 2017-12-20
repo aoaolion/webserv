@@ -41,3 +41,13 @@ There are three ways to shutdown this service.
 - Via api, http://ip:port/close 
 - Via OS signals, such as kill, ctl+c
 - Via ttl method, on condition that the ttl value is not 0
+
+
+# Docker
+
+Try to use docker as the container.
+
+``` Shell
+docker build -t aoaolion/webserv .
+docker run -p 80:8080 -v ~/Downloads:/root/go/src/github.com/aoaolion/webserv/file_root aoaolion/webserv
+```
